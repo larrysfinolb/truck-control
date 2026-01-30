@@ -12,52 +12,41 @@ import {
 } from "@/modules/shared/components/UI/dialog";
 import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from "@/modules/shared/components/UI/field";
 import { useForm } from "@tanstack/react-form";
-import * as z from "zod";
 import { Input } from "@/modules/shared/components/UI/input";
 import { DialogDescription } from "@radix-ui/react-dialog";
-
-const FORM_SCHEMA = z.object({
-  vehicle: z
-    .string()
-    .min(2, "Vehicle must be at least 2 characters.")
-    .max(32, "Vehicle must be at most 32 characters."),
-  driver: z
-    .string()
-    .min(2, "Driver name must be at least 2 characters.")
-    .max(32, "Driver name must be at most 32 characters."),
-  date: z.string().refine((val) => !isNaN(Date.parse(val)), {
-    message: "Please enter a valid date.",
-  }),
-  origin: z.string().min(2, "Origin must be at least 2 characters.").max(64, "Origin must be at most 64 characters."),
-  destination: z
-    .string()
-    .min(2, "Destination must be at least 2 characters.")
-    .max(64, "Destination must be at most 64 characters."),
-  rate: z.number().min(0, "Rate must be a positive number."),
-  carrierFee: z.number().min(0, "Carrier fee must be a positive number.").max(1, "Carrier fee must be at most 100."),
-});
+import { DeliveryType } from "../../enums/deliveryType";
+import { rateDeliverySchema } from "../../schemas/delivery";
+import { useCreateDelivery } from "../../hooks/useDeliveries";
+import { useApiError } from "@/modules/shared/hooks/useApiError";
+import { FailedAlert } from "../Alerts/FailedAlert";
 
 export function CreateBasedOnRateDialog() {
+  const createDelivery = useCreateDelivery();
+  const errorDisplay = useApiError(createDelivery.error);
+
   const form = useForm({
     defaultValues: {
+      type: DeliveryType.FIXED_RATE,
       vehicle: "",
       driver: "",
-      date: new Date().toISOString().split("T")[0],
+      pickupDate: new Date().toISOString().split("T")[0],
       origin: "",
       destination: "",
       rate: 0,
       carrierFee: 0,
     },
     validators: {
-      onSubmit: FORM_SCHEMA,
-      onChange: FORM_SCHEMA,
+      onSubmit: rateDeliverySchema,
+      onChange: rateDeliverySchema,
     },
     onSubmit: async ({ value }) => {
+      await createDelivery.mutateAsync(value);
       form.reset();
     },
   });
 
-  const handleSubmit = () => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     form.handleSubmit();
   };
 
@@ -73,6 +62,10 @@ export function CreateBasedOnRateDialog() {
         </DialogHeader>
         <FieldSet>
           <FieldGroup>
+            <form.Field name='type'>
+              {(field) => <input type='hidden' id={field.name} name={field.name} value={field.state.value} readOnly />}
+            </form.Field>
+
             <form.Field name='vehicle'>
               {(field) => {
                 const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
@@ -125,7 +118,7 @@ export function CreateBasedOnRateDialog() {
           </FieldGroup>
 
           <FieldGroup>
-            <form.Field name='date'>
+            <form.Field name='pickupDate'>
               {(field) => {
                 const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
                 return (
@@ -252,6 +245,10 @@ export function CreateBasedOnRateDialog() {
               }}
             </form.Field>
           </FieldGroup>
+
+          {createDelivery.isError && errorDisplay && (
+            <FailedAlert title={errorDisplay.title} description={errorDisplay.message} />
+          )}
         </FieldSet>
         <DialogFooter className='gap-2'>
           <DialogClose asChild>

@@ -3,5 +3,5 @@ import { User } from "./user";
 
 export type SignupResponse = ApiResponse<{
   user: User;
-  token: string;
+  accessToken: string;
 }>;

@@ -12,62 +12,43 @@ import {
 } from "@/modules/shared/components/UI/dialog";
 import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from "@/modules/shared/components/UI/field";
 import { useForm } from "@tanstack/react-form";
-import * as z from "zod";
 import { Input } from "@/modules/shared/components/UI/input";
 import { DialogDescription } from "@radix-ui/react-dialog";
-
-const FORM_SCHEMA = z.object({
-  vehicle: z
-    .string()
-    .min(2, "Vehicle must be at least 2 characters.")
-    .max(32, "Vehicle must be at most 32 characters."),
-  driver: z
-    .string()
-    .min(2, "Driver name must be at least 2 characters.")
-    .max(32, "Driver name must be at most 32 characters."),
-  date: z.string().refine((val) => !isNaN(Date.parse(val)), {
-    message: "Please enter a valid date.",
-  }),
-  origin: z.string().min(2, "Origin must be at least 2 characters.").max(64, "Origin must be at most 64 characters."),
-  destination: z
-    .string()
-    .min(2, "Destination must be at least 2 characters.")
-    .max(64, "Destination must be at most 64 characters."),
-  miles: z.number().min(0, "Miles must be a positive number."),
-  ratePerMile: z
-    .number()
-    .min(0, "Rate per mile must be a positive number.")
-    .max(1, "Rate per mile must be at most 100."),
-  milesDeadhead: z.number().min(0, "Deadhead miles must be a positive number."),
-  ratePerMileDeadhead: z
-    .number()
-    .min(0, "Rate per mile deadhead must be a positive number.")
-    .max(1, "Rate per mile deadhead must be at most 100."),
-});
+import { mileageDeliverySchema } from "../../schemas/delivery";
+import { DeliveryType } from "../../enums/deliveryType";
+import { useCreateDelivery } from "../../hooks/useDeliveries";
+import { useApiError } from "@/modules/shared/hooks/useApiError";
+import { FailedAlert } from "../Alerts/FailedAlert";
 
 export function CreateBasedOnMileageDialog() {
+  const createDelivery = useCreateDelivery();
+  const errorDisplay = useApiError(createDelivery.error);
+
   const form = useForm({
     defaultValues: {
+      type: DeliveryType.MILEAGE_BASED,
       vehicle: "",
       driver: "",
-      date: new Date().toISOString().split("T")[0],
+      pickupDate: new Date().toISOString().split("T")[0],
       origin: "",
       destination: "",
       miles: 0,
-      milesDeadhead: 0,
+      deadheadMiles: 0,
       ratePerMile: 0,
-      ratePerMileDeadhead: 0,
+      ratePerDeadheadMile: 0,
     },
     validators: {
-      onSubmit: FORM_SCHEMA,
-      onChange: FORM_SCHEMA,
+      onSubmit: mileageDeliverySchema,
+      onChange: mileageDeliverySchema,
     },
     onSubmit: async ({ value }) => {
+      await createDelivery.mutateAsync(value);
       form.reset();
     },
   });
 
-  const handleSubmit = () => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     form.handleSubmit();
   };
 
@@ -83,6 +64,10 @@ export function CreateBasedOnMileageDialog() {
         </DialogHeader>
         <FieldSet>
           <FieldGroup>
+            <form.Field name='type'>
+              {(field) => <input type='hidden' id={field.name} name={field.name} value={field.state.value} readOnly />}
+            </form.Field>
+
             <form.Field name='vehicle'>
               {(field) => {
                 const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
@@ -135,7 +120,7 @@ export function CreateBasedOnMileageDialog() {
           </FieldGroup>
 
           <FieldGroup>
-            <form.Field name='date'>
+            <form.Field name='pickupDate'>
               {(field) => {
                 const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
                 return (
@@ -263,7 +248,7 @@ export function CreateBasedOnMileageDialog() {
           </FieldGroup>
 
           <FieldGroup className='flex flex-row gap-4'>
-            <form.Field name='milesDeadhead'>
+            <form.Field name='deadheadMiles'>
               {(field) => {
                 const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
                 return (
@@ -289,13 +274,13 @@ export function CreateBasedOnMileageDialog() {
               }}
             </form.Field>
 
-            <form.Field name='ratePerMileDeadhead'>
+            <form.Field name='ratePerDeadheadMile'>
               {(field) => {
                 const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
                 return (
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name} required>
-                      Rate per Mile Deadhead
+                      Rate per Deadhead Mile
                     </FieldLabel>
                     <Input
                       type='number'
@@ -305,7 +290,7 @@ export function CreateBasedOnMileageDialog() {
                       onBlur={field.handleBlur}
                       onChange={(e) => field.handleChange(Number(e.target.value))}
                       aria-invalid={isInvalid}
-                      placeholder='Enter rate per mile deadhead'
+                      placeholder='Enter rate per deadhead mile'
                       autoComplete='off'
                     />
                     {isInvalid && <FieldError errors={field.state.meta.errors} />}
@@ -314,6 +299,10 @@ export function CreateBasedOnMileageDialog() {
               }}
             </form.Field>
           </FieldGroup>
+
+          {createDelivery.isError && errorDisplay && (
+            <FailedAlert title={errorDisplay.title} description={errorDisplay.message} />
+          )}
         </FieldSet>
         <DialogFooter className='gap-2'>
           <DialogClose asChild>
