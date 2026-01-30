@@ -3,6 +3,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { authApi } from "../api/auth";
 import { useRouter } from "next/navigation";
+import { authStorage } from "../utils/authStorage";
 
 export const useLogin = () => {
   const router = useRouter();
@@ -10,7 +11,7 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: authApi.login,
     onSuccess: ({ data }) => {
-      localStorage.setItem("token", data.accessToken);
+      authStorage.setToken(data.accessToken);
       router.push("/");
     },
     onError: (error) => {
