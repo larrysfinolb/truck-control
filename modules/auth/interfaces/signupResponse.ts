@@ -1,6 +1,7 @@
+import { ApiResponse } from "@/modules/shared/interfaces/apiResponse";
 import { User } from "./user";
 
-export interface SignupResponse {
+export type SignupResponse = ApiResponse<{
   user: User;
   token: string;
-}
+}>;

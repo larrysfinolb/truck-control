@@ -9,8 +9,8 @@ export const useLogin = () => {
 
   return useMutation({
     mutationFn: authApi.login,
-    onSuccess: (data) => {
-      localStorage.setItem("token", data.token);
+    onSuccess: ({ data }) => {
+      localStorage.setItem("token", data.accessToken);
       router.push("/");
     },
     onError: (error) => {
