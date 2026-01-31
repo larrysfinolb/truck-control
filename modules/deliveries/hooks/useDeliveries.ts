@@ -2,13 +2,18 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { deliveriesApi } from "../api/deliveries";
 import { CreateDeliverySchemaType, UpdateDeliverySchemaType } from "../schemas/delivery";
 import { DeliveriesListParams } from "../interfaces/deliveryParams";
+import { GetAllResponse } from "@/modules/shared/interfaces/apiResponse";
+import { Delivery } from "../interfaces/deliveryResponse";
 
 const KEY = "deliveries";
 
-export const useDeliveries = (params: DeliveriesListParams) => {
+export const useDeliveries = <T = Delivery>(params: DeliveriesListParams) => {
   return useQuery({
     queryKey: [KEY, params],
-    queryFn: () => deliveriesApi.getAll(params),
+    queryFn: async () => {
+      const response = await deliveriesApi.getAll(params);
+      return response as GetAllResponse<T>;
+    },
   });
 };
 

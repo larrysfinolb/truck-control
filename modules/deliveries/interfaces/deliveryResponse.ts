@@ -9,6 +9,7 @@ export interface Delivery {
   driver: string;
   origin: string;
   destination: string;
+  pickupDate: Date;
   rate?: number;
   carrierFee?: number;
   miles?: number;
@@ -18,6 +19,23 @@ export interface Delivery {
   createdAt: string;
   updatedAt: string;
   deletedAt?: string;
+}
+
+export interface DeliveryBasedOnRate extends Omit<
+  Delivery,
+  "miles" | "ratePerMile" | "deadheadMiles" | "ratePerDeadheadMile"
+> {
+  type: DeliveryType.FIXED_RATE;
+  rate: number;
+  carrierFee: number;
+}
+
+export interface DeliveryBasedOnMileage extends Omit<Delivery, "rate" | "carrierFee"> {
+  type: DeliveryType.MILEAGE_BASED;
+  miles: number;
+  ratePerMile: number;
+  deadheadMiles: number;
+  ratePerDeadheadMile: number;
 }
 
 export type DeliveriesListResponse = GetAllResponse<Delivery>;

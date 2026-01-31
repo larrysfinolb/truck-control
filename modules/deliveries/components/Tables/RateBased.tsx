@@ -1,9 +1,9 @@
 "use client";
 
-import { DeliveryBasedOnRate } from "@/modules/deliveries/interfaces/delivery";
 import { DataTable } from "@/modules/shared/components/Table";
 import { ColumnDef } from "@tanstack/react-table";
 import { CircleUserIcon } from "lucide-react";
+import { DeliveryBasedOnRate } from "../../interfaces/deliveryResponse";
 
 interface DeliveriesBasedOnRateTableProps {
   data: DeliveryBasedOnRate[];
@@ -18,7 +18,7 @@ const COLUMNS: ColumnDef<DeliveryBasedOnRate>[] = [
     accessorKey: "date",
     header: "Date",
     cell: ({ row }) => {
-      const date: Date = row.original.date;
+      const date = new Date(row.original.pickupDate);
       return date.toLocaleDateString();
     },
   },

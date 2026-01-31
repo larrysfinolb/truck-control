@@ -1,9 +1,9 @@
 "use client";
 
 import { DataTable } from "@/modules/shared/components/Table";
-import { DeliveryBasedOnMileage } from "@/modules/deliveries/interfaces/delivery";
 import { ColumnDef } from "@tanstack/react-table";
 import { CircleUserIcon } from "lucide-react";
+import { DeliveryBasedOnMileage } from "../../interfaces/deliveryResponse";
 
 interface DeliveriesBasedOnMileageTableProps {
   data: DeliveryBasedOnMileage[];
@@ -18,7 +18,7 @@ const COLUMNS: ColumnDef<DeliveryBasedOnMileage>[] = [
     accessorKey: "date",
     header: "Date",
     cell: ({ row }) => {
-      const date: Date = row.original.date;
+      const date = new Date(row.original.pickupDate);
       return date.toLocaleDateString();
     },
   },
@@ -66,7 +66,7 @@ const COLUMNS: ColumnDef<DeliveryBasedOnMileage>[] = [
     accessorKey: "milesDeadhead",
     header: "Deadhead Miles",
     cell: ({ row }) => {
-      const milesDeadhead: number = row.original.milesDeadhead;
+      const milesDeadhead: number = row.original.deadheadMiles;
       return Intl.NumberFormat("en-US").format(milesDeadhead);
     },
   },
@@ -74,7 +74,7 @@ const COLUMNS: ColumnDef<DeliveryBasedOnMileage>[] = [
     accessorKey: "ratePerMileDeadhead",
     header: "Deadhead Rate per Mile",
     cell: ({ row }) => {
-      const ratePerMileDeadhead: number = row.original.ratePerMileDeadhead;
+      const ratePerMileDeadhead: number = row.original.ratePerDeadheadMile;
       return Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(ratePerMileDeadhead);
     },
   },
