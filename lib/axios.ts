@@ -16,8 +16,6 @@ api.interceptors.request.use(
       config.headers.setAuthorization(`Bearer ${token}`);
     }
 
-    console.log("Request Config:", config);
-
     return config;
   },
   (error) => {
