@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { BanknoteArrowDown, Command, Package } from "lucide-react";
+import { BanknoteArrowDown, Command, Package, Van } from "lucide-react";
 
 import { NavMain } from "@/modules/shared/components/Sidebar/nav-main";
 import { NavUser } from "@/modules/shared/components/Sidebar/nav-user";
@@ -17,12 +17,12 @@ import {
 
 const data = {
   navMain: [
-    // {
-    //   title: "Vehículos",
-    //   url: "/vehicles",
-    //   icon: Van,
-    //   isActive: true,
-    // },
+    {
+      title: "Trucks",
+      url: "/trucks",
+      icon: Van,
+      isActive: true,
+    },
     {
       title: "Deliveries",
       url: "#",
