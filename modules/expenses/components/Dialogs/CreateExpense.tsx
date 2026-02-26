@@ -16,7 +16,7 @@ import {
 import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from "@/modules/shared/components/UI/field";
 import { Input } from "@/modules/shared/components/UI/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/modules/shared/components/UI/select";
-import { ExpenseCategory } from "../expenseCategory";
+import { ExpenseCategory } from "../../enums/expenseCategory";
 import { AppAlert } from "@/modules/shared/components/Alert";
 
 export function CreateExpense() {

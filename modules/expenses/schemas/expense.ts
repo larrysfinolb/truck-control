@@ -1,5 +1,5 @@
 import z from "zod";
-import { ExpenseCategory } from "../components/expenseCategory";
+import { ExpenseCategory } from "../enums/expenseCategory";
 
 export const createExpenseSchema = z.object({
   category: z.enum(ExpenseCategory),

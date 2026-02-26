@@ -24,7 +24,6 @@ export const expensesApi = {
     return response.data;
   },
   create: async (payload: CreateExpenseSchemaType) => {
-    console.log("Creating expense with payload:", payload);
     const response = await api.post<CreateExpenseResponse>("/expenses", payload);
     return response.data;
   },

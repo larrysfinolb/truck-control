@@ -1,5 +1,5 @@
 import { ApiResponse, DeleteResponse, GetAllResponse, SingleEntityResponse } from "@/modules/shared/interfaces/apiResponse";
-import { ExpenseCategory } from "../components/expenseCategory";
+import { ExpenseCategory } from "../enums/expenseCategory";
 
 export interface Expense {
   id: string;
