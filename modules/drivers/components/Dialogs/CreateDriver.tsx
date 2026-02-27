@@ -17,13 +17,14 @@ import { AppAlert } from "@/modules/shared/components/Alert";
 import { useCreateDriver } from "../../hooks/useDrivers";
 import { createDriverSchema } from "../../schemas/driver";
 import { useState } from "react";
-import { UploadThingAvatar } from "@/modules/shared/components/UI/uploadthing-avatar";
+import { DriverLicenseInput } from "../DriverLicenseInput/DriverLicenseInput";
+import { PhoneInput } from "@/modules/shared/components/UI/phone-input";
 
 export function CreateDriver() {
   const createDriver = useCreateDriver();
   const errorDisplay = useApiError(createDriver.error);
-  // TODO: Implementar el guardado de imágenes para los conductores.
-  const [driverAvatar, setDriverAvatar] = useState<string | null>(null);
+  // TODO: Implementar el guardado de imágenes las licencias.
+  const [driverLicense, setDriverLicense] = useState<File[]>([]);
 
   const form = useForm({
     defaultValues: {
@@ -38,6 +39,7 @@ export function CreateDriver() {
     onSubmit: async ({ value }) => {
       await createDriver.mutateAsync(value);
       form.reset();
+      setDriverLicense([]);
     },
   });
 
@@ -57,11 +59,6 @@ export function CreateDriver() {
           <DialogDescription>Fill out the form below to create a new driver.</DialogDescription>
         </DialogHeader>
         <FieldSet>
-          <Field>
-            <FieldLabel htmlFor={"driverAvatar"}>Avatar</FieldLabel>
-            <UploadThingAvatar value={driverAvatar} onChange={setDriverAvatar} size='lg' />
-          </Field>
-
           <FieldGroup className='flex flex-row gap-4'>
             <form.Field name='firstName'>
               {(field) => {
@@ -122,7 +119,18 @@ export function CreateDriver() {
                   <FieldLabel htmlFor={field.name} required>
                     Phone Number
                   </FieldLabel>
-                  <Input
+                  <PhoneInput
+                    id={field.name}
+                    name={field.name}
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(value) => field.handleChange(value)}
+                    aria-invalid={isInvalid}
+                    defaultCountry='US'
+                    placeholder='Enter a phone number'
+                    international
+                  />
+                  {/* <Input
                     type='tel'
                     id={field.name}
                     name={field.name}
@@ -132,12 +140,17 @@ export function CreateDriver() {
                     aria-invalid={isInvalid}
                     placeholder='Enter phone number'
                     autoComplete='off'
-                  />
+                  /> */}
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </Field>
               );
             }}
           </form.Field>
+
+          <Field>
+            <FieldLabel htmlFor='driverLicense'>Driver License</FieldLabel>
+            <DriverLicenseInput value={driverLicense} onChange={setDriverLicense} />
+          </Field>
 
           {createDriver.isError && errorDisplay && (
             <AppAlert variant='destructive' title={errorDisplay.title} description={errorDisplay.message} />
