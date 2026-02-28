@@ -16,6 +16,7 @@ export interface Delivery {
   ratePerMile?: number;
   deadheadMiles?: number;
   ratePerDeadheadMile?: number;
+  totalPayment?: number;
   createdAt: string;
   updatedAt: string;
   deletedAt?: string;
@@ -36,6 +37,7 @@ export interface DeliveryBasedOnMileage extends Omit<Delivery, "rate" | "carrier
   ratePerMile: number;
   deadheadMiles: number;
   ratePerDeadheadMile: number;
+  totalPayment: number;
 }
 
 export type DeliveriesListResponse = GetAllResponse<Delivery>;
@@ -55,12 +57,4 @@ export interface DeliveryByRate extends Omit<
   type: DeliveryType.FIXED_RATE;
   rate: number;
   carrierFee: number;
-}
-
-export interface DeliveryByMileage extends Omit<Delivery, "rate" | "carrierFee"> {
-  type: DeliveryType.MILEAGE_BASED;
-  miles: number;
-  ratePerMile: number;
-  deadheadMiles: number;
-  ratePerDeadheadMile: number;
 }

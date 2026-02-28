@@ -19,6 +19,7 @@ import { DeliveryType } from "../../enums/deliveryType";
 import { useCreateDelivery } from "../../hooks/useDeliveries";
 import { useApiError } from "@/modules/shared/hooks/useApiError";
 import { FailedAlert } from "../Alerts/FailedAlert";
+import { calculateMileageTotalPayment } from "../../helpers/calculateMileageTotalPayment";
 
 export function CreateBasedOnMileageDialog() {
   const createDelivery = useCreateDelivery();
@@ -38,11 +39,18 @@ export function CreateBasedOnMileageDialog() {
       ratePerDeadheadMile: 0,
     },
     validators: {
-      onSubmit: mileageDeliverySchema,
-      onChange: mileageDeliverySchema,
+      onSubmit: mileageDeliverySchema.omit({ totalPayment: true }),
+      onChange: mileageDeliverySchema.omit({ totalPayment: true }),
     },
     onSubmit: async ({ value }) => {
-      await createDelivery.mutateAsync(value);
+      const totalPayment = calculateMileageTotalPayment(
+        value.miles,
+        value.ratePerMile,
+        value.deadheadMiles,
+        value.ratePerDeadheadMile
+      );
+
+      await createDelivery.mutateAsync({ ...value, totalPayment });
       form.reset();
     },
   });
@@ -298,6 +306,42 @@ export function CreateBasedOnMileageDialog() {
                 );
               }}
             </form.Field>
+          </FieldGroup>
+
+          <FieldGroup>
+            <form.Subscribe
+              selector={(state) => ({
+                miles: state.values.miles,
+                ratePerMile: state.values.ratePerMile,
+                deadheadMiles: state.values.deadheadMiles,
+                ratePerDeadheadMile: state.values.ratePerDeadheadMile,
+              })}
+            >
+              {(values) => {
+                const { miles, ratePerMile, deadheadMiles, ratePerDeadheadMile } = values;
+                const totalPayment = calculateMileageTotalPayment(
+                  miles,
+                  ratePerMile,
+                  deadheadMiles,
+                  ratePerDeadheadMile
+                );
+
+                return (
+                  <Field>
+                    <FieldLabel htmlFor='totalPayment'>Total Payment</FieldLabel>
+                    <Input
+                      type='number'
+                      id='totalPayment'
+                      name='totalPayment'
+                      value={totalPayment}
+                      readOnly
+                      tabIndex={-1}
+                      placeholder='Total payment will be calculated automatically'
+                    />
+                  </Field>
+                );
+              }}
+            </form.Subscribe>
           </FieldGroup>
 
           {createDelivery.isError && errorDisplay && (

@@ -20,6 +20,7 @@ export const mileageDeliverySchema = baseDeliverySchema.extend({
   ratePerMile: z.number().positive(),
   deadheadMiles: z.number().min(0),
   ratePerDeadheadMile: z.number().min(0),
+  totalPayment: z.number().positive(),
 });
 
 export const updateDeliverySchema = z.object({

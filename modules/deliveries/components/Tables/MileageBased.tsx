@@ -78,6 +78,14 @@ const COLUMNS: ColumnDef<DeliveryBasedOnMileage>[] = [
       return Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(ratePerMileDeadhead);
     },
   },
+  {
+    accessorKey: "totalPayment",
+    header: "Total Payment",
+    cell: ({ row }) => {
+      const totalPayment: number = row.original.totalPayment;
+      return Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(totalPayment);
+    },
+  },
 ];
 
 export function DeliveriesBasedOnMileageTable({ data }: DeliveriesBasedOnMileageTableProps) {
