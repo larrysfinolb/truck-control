@@ -20,16 +20,22 @@ import { useCreateDelivery } from "../../hooks/useDeliveries";
 import { useApiError } from "@/modules/shared/hooks/useApiError";
 import { FailedAlert } from "../Alerts/FailedAlert";
 import { calculateMileageTotalPayment } from "../../helpers/calculateMileageTotalPayment";
+import { useTrucks } from "@/modules/trucks/hooks/useTrucks";
+import { useDrivers } from "@/modules/drivers/hooks/useDrivers";
+import { TruckSelect } from "@/modules/trucks/components/TruckSelect/TruckSelect";
+import { DriverSelect } from "@/modules/drivers/components/DriverSelect/DriverSelect";
 
 export function CreateTripPerMile() {
   const createDelivery = useCreateDelivery();
   const errorDisplay = useApiError(createDelivery.error);
+  const { data: trucks } = useTrucks({});
+  const { data: drivers } = useDrivers({});
 
   const form = useForm({
     defaultValues: {
       type: DeliveryType.MILEAGE_BASED,
-      vehicle: "",
-      driver: "",
+      vehicleId: "",
+      driverId: "",
       pickupDate: new Date().toISOString().split("T")[0],
       origin: "",
       destination: "",
@@ -71,28 +77,26 @@ export function CreateTripPerMile() {
           <DialogDescription>Fill out the form below to create a new trip per mile.</DialogDescription>
         </DialogHeader>
         <FieldSet>
-          <FieldGroup>
-            <form.Field name='type'>
-              {(field) => <input type='hidden' id={field.name} name={field.name} value={field.state.value} readOnly />}
-            </form.Field>
+          <form.Field name='type'>
+            {(field) => <input type='hidden' id={field.name} name={field.name} value={field.state.value} readOnly />}
+          </form.Field>
 
-            <form.Field name='vehicle'>
+          <FieldGroup>
+            <form.Field name='vehicleId'>
               {(field) => {
                 const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
                 return (
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name} required>
-                      Vehicle
+                      Trucks
                     </FieldLabel>
-                    <Input
-                      id={field.name}
-                      name={field.name}
+                    <TruckSelect
                       value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      aria-invalid={isInvalid}
-                      placeholder='Enter vehicle identifier'
-                      autoComplete='off'
+                      onChange={(value) => field.handleChange(value)}
+                      trucks={trucks?.data || []}
+                      id={field.name}
+                      isInvalid={isInvalid}
+                      placeholder='Select a vehicle'
                     />
                     {isInvalid && <FieldError errors={field.state.meta.errors} />}
                   </Field>
@@ -102,7 +106,7 @@ export function CreateTripPerMile() {
           </FieldGroup>
 
           <FieldGroup>
-            <form.Field name='driver'>
+            <form.Field name='driverId'>
               {(field) => {
                 const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
                 return (
@@ -110,15 +114,13 @@ export function CreateTripPerMile() {
                     <FieldLabel htmlFor={field.name} required>
                       Driver
                     </FieldLabel>
-                    <Input
-                      id={field.name}
-                      name={field.name}
+                    <DriverSelect
                       value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      aria-invalid={isInvalid}
-                      placeholder='Enter driver name'
-                      autoComplete='off'
+                      onChange={(value) => field.handleChange(value)}
+                      drivers={drivers?.data || []}
+                      id={field.name}
+                      isInvalid={isInvalid}
+                      placeholder='Select a driver'
                     />
                     {isInvalid && <FieldError errors={field.state.meta.errors} />}
                   </Field>

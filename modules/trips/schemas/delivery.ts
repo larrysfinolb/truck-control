@@ -3,8 +3,8 @@ import { DeliveryType } from "../enums/deliveryType";
 
 const baseDeliverySchema = z.object({
   type: z.enum(DeliveryType),
-  vehicle: z.string().min(1),
-  driver: z.string().min(1),
+  vehicleId: z.uuid(),
+  driverId: z.uuid(),
   pickupDate: z.string().refine((value) => !isNaN(Date.parse(value))),
   origin: z.string().min(1),
   destination: z.string().min(1),

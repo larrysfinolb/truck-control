@@ -1,12 +1,16 @@
 import { DeleteResponse, GetAllResponse, SingleEntityResponse } from "@/modules/shared/interfaces/apiResponse";
 import { DeliveryType } from "../enums/deliveryType";
+import { Truck } from "@/modules/trucks/interfaces/truckResponse";
+import { Driver } from "@/modules/drivers/interfaces/driverResponse";
 
 export interface Delivery {
   id: string;
   userId: string;
   type: DeliveryType;
-  vehicle: string;
-  driver: string;
+  vehicleId: string;
+  vehicle: Truck;
+  driverId: string;
+  driver: Driver;
   origin: string;
   destination: string;
   pickupDate: Date;

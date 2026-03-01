@@ -2,7 +2,6 @@
 
 import { DataTable } from "@/modules/shared/components/Table";
 import { ColumnDef } from "@tanstack/react-table";
-import { CircleUserIcon } from "lucide-react";
 import { DeliveryBasedOnRate } from "../../interfaces/deliveryResponse";
 
 interface DeliveriesBasedOnRateTableProps {
@@ -25,15 +24,23 @@ const COLUMNS: ColumnDef<DeliveryBasedOnRate>[] = [
   {
     accessorKey: "vehicle",
     header: "Vehicle",
+    cell: ({ row }) => {
+      const { licensePlate, model } = row.original.vehicle;
+      return (
+        <span className='flex items-center gap-2'>
+          {licensePlate} - {model}
+        </span>
+      );
+    },
   },
   {
     accessorKey: "driver",
     header: "Driver",
     cell: ({ row }) => {
-      const driverName: string = row.original.driver;
+      const { firstName, lastName } = row.original.driver;
       return (
         <span className='flex items-center gap-2'>
-          <CircleUserIcon /> {driverName}
+          {firstName} {lastName}
         </span>
       );
     },
