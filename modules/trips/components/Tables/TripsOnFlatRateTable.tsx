@@ -64,6 +64,6 @@ const COLUMNS: ColumnDef<DeliveryBasedOnRate>[] = [
   },
 ];
 
-export function DeliveriesBasedOnRateTable({ data }: DeliveriesBasedOnRateTableProps) {
+export function TripsOnFlatRateTable({ data }: DeliveriesBasedOnRateTableProps) {
   return <DataTable columns={COLUMNS} data={data} />;
 }

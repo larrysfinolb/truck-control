@@ -29,17 +29,17 @@ const data = {
       icon: Users,
     },
     {
-      title: "Deliveries",
+      title: "Trips",
       url: "#",
       icon: Package,
       items: [
         {
-          title: "Rate Based",
-          url: "/deliveries/rate-based",
+          title: "Flat Rate",
+          url: "/trips/flat-rate",
         },
         {
-          title: "Mileage Based",
-          url: "/deliveries/mileage-based",
+          title: "Per Mile",
+          url: "/trips/per-mile",
         },
       ],
     },

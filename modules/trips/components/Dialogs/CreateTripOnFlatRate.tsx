@@ -20,7 +20,7 @@ import { useCreateDelivery } from "../../hooks/useDeliveries";
 import { useApiError } from "@/modules/shared/hooks/useApiError";
 import { FailedAlert } from "../Alerts/FailedAlert";
 
-export function CreateBasedOnRateDialog() {
+export function CreateTripOnFlatRate() {
   const createDelivery = useCreateDelivery();
   const errorDisplay = useApiError(createDelivery.error);
 
@@ -53,12 +53,12 @@ export function CreateBasedOnRateDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant='outline'>Add Delivery</Button>
+        <Button variant='outline'>Add Trip</Button>
       </DialogTrigger>
       <DialogContent className='sm:max-w-135'>
         <DialogHeader>
-          <DialogTitle>Create Delivery Based on Rate</DialogTitle>
-          <DialogDescription>Fill out the form below to create a new delivery based on rate.</DialogDescription>
+          <DialogTitle>Create Trip Based on Rate</DialogTitle>
+          <DialogDescription>Fill out the form below to create a new trip on flat rate.</DialogDescription>
         </DialogHeader>
         <FieldSet>
           <FieldGroup>

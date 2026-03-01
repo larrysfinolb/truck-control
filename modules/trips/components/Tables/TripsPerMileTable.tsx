@@ -88,6 +88,6 @@ const COLUMNS: ColumnDef<DeliveryBasedOnMileage>[] = [
   },
 ];
 
-export function DeliveriesBasedOnMileageTable({ data }: DeliveriesBasedOnMileageTableProps) {
+export function TripsPerMileTable({ data }: DeliveriesBasedOnMileageTableProps) {
   return <DataTable columns={COLUMNS} data={data} />;
 }

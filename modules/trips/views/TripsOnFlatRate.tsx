@@ -1,16 +1,16 @@
 "use client";
 
 import { usePageTitle } from "@/modules/shared/hooks/usePageTitle";
-import { CreateBasedOnRateDialog } from "../components/Dialogs";
-import { DeliveriesBasedOnRateTable } from "../components/Tables";
 import { DeliveriesLayout } from "../layouts/DeliveriesLayout";
 import { DeliveryType } from "../enums/deliveryType";
 import { useDeliveries } from "../hooks/useDeliveries";
 import { DeliveryBasedOnRate } from "../interfaces/deliveryResponse";
 import { useState } from "react";
+import { CreateTripOnFlatRate } from "../components/Dialogs";
+import { TripsOnFlatRateTable } from "../components/Tables";
 
-export default function DeliveriesBasedOnRateView() {
-  usePageTitle("Deliveries Based on Rate");
+export default function TripsOnFlatRate() {
+  usePageTitle("Trips on Flat Rate");
   const [params, _setParams] = useState({
     page: 1,
     limit: 100,
@@ -22,9 +22,9 @@ export default function DeliveriesBasedOnRateView() {
   return (
     <DeliveriesLayout>
       <div className='flex justify-end'>
-        <CreateBasedOnRateDialog />
+        <CreateTripOnFlatRate />
       </div>
-      <DeliveriesBasedOnRateTable data={data?.data ?? []} />
+      <TripsOnFlatRateTable data={data?.data ?? []} />
     </DeliveriesLayout>
   );
 }
