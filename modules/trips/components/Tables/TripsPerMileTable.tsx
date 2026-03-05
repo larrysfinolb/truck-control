@@ -3,6 +3,9 @@
 import { DataTable } from "@/modules/shared/components/Table";
 import { ColumnDef } from "@tanstack/react-table";
 import { DeliveryBasedOnMileage } from "../../interfaces/deliveryResponse";
+import { Button } from "@/modules/shared/components/UI/button";
+import { Library } from "lucide-react";
+import Link from "next/link";
 
 interface DeliveriesBasedOnMileageTableProps {
   data: DeliveryBasedOnMileage[];
@@ -91,6 +94,19 @@ const COLUMNS: ColumnDef<DeliveryBasedOnMileage>[] = [
     cell: ({ row }) => {
       const totalPayment: number = row.original.totalPayment;
       return Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(totalPayment);
+    },
+  },
+  {
+    accessorKey: "actions",
+    header: "Actions",
+    cell: ({ row }) => {
+      return (
+        <Button size={"icon-sm"} variant={"outline"} tooltip='Details'>
+          <Link href={`/trips/${row.original.id}`}>
+            <Library />
+          </Link>
+        </Button>
+      );
     },
   },
 ];

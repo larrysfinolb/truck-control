@@ -3,6 +3,9 @@
 import { DataTable } from "@/modules/shared/components/Table";
 import { ColumnDef } from "@tanstack/react-table";
 import { DeliveryBasedOnRate } from "../../interfaces/deliveryResponse";
+import { Button } from "@/modules/shared/components/UI/button";
+import { Library } from "lucide-react";
+import Link from "next/link";
 
 interface DeliveriesBasedOnRateTableProps {
   data: DeliveryBasedOnRate[];
@@ -67,6 +70,19 @@ const COLUMNS: ColumnDef<DeliveryBasedOnRate>[] = [
     cell: ({ row }) => {
       const carrierFee: number = row.original.carrierFee;
       return Intl.NumberFormat("en-US", { style: "percent" }).format(carrierFee);
+    },
+  },
+  {
+    accessorKey: "actions",
+    header: "Actions",
+    cell: ({ row }) => {
+      return (
+        <Button size={"icon-sm"} variant={"outline"} tooltip='Details'>
+          <Link href={`/trips/${row.original.id}`}>
+            <Library />
+          </Link>
+        </Button>
+      );
     },
   },
 ];
