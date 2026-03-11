@@ -30,18 +30,8 @@ const data = {
     },
     {
       title: "Trips",
-      url: "#",
+      url: "/trips",
       icon: Package,
-      items: [
-        {
-          title: "Flat Rate",
-          url: "/trips/flat-rate",
-        },
-        {
-          title: "Per Mile",
-          url: "/trips/per-mile",
-        },
-      ],
     },
     {
       title: "Expenses",

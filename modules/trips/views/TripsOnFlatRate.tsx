@@ -10,7 +10,7 @@ import { CreateTripOnFlatRate } from "../components/Dialogs";
 import { TripsOnFlatRateTable } from "../components/Tables";
 
 export default function TripsOnFlatRate() {
-  usePageTitle("Trips on Flat Rate");
+  usePageTitle("Trips");
   const [params, _setParams] = useState({
     page: 1,
     limit: 100,

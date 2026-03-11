@@ -16,6 +16,7 @@ export interface Delivery {
   pickupDate: Date;
   rate?: number;
   carrierFee?: number;
+  totalRate?: number;
   miles?: number;
   ratePerMile?: number;
   deadheadMiles?: number;
@@ -33,6 +34,7 @@ export interface DeliveryBasedOnRate extends Omit<
   type: DeliveryType.FIXED_RATE;
   rate: number;
   carrierFee: number;
+  totalRate: number;
 }
 
 export interface DeliveryBasedOnMileage extends Omit<Delivery, "rate" | "carrierFee"> {

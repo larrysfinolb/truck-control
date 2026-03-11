@@ -68,8 +68,18 @@ const COLUMNS: ColumnDef<DeliveryBasedOnRate>[] = [
     accessorKey: "carrierFee",
     header: "Carrier Fee",
     cell: ({ row }) => {
-      const carrierFee: number = row.original.carrierFee;
-      return Intl.NumberFormat("en-US", { style: "percent" }).format(carrierFee);
+      const rate = row.original.rate;
+      const carrierFee = row.original.carrierFee;
+      const feeAmount = rate * carrierFee;
+      return Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(feeAmount);
+    },
+  },
+  {
+    accessorKey: "totalRate",
+    header: "Total Rate",
+    cell: ({ row }) => {
+      const totalRate: number = row.original.totalRate;
+      return Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(totalRate);
     },
   },
   {

@@ -23,6 +23,7 @@ import { useTrucks } from "@/modules/trucks/hooks/useTrucks";
 import { useDrivers } from "@/modules/drivers/hooks/useDrivers";
 import { TruckSelect } from "@/modules/trucks/components/TruckSelect/TruckSelect";
 import { DriverSelect } from "@/modules/drivers/components/DriverSelect/DriverSelect";
+import { calculateTotalRate } from "../../helpers/calculateTotalRate";
 
 export function CreateTripOnFlatRate() {
   const createDelivery = useCreateDelivery();
@@ -42,12 +43,13 @@ export function CreateTripOnFlatRate() {
       carrierFee: 0,
     },
     validators: {
-      onSubmit: rateDeliverySchema,
-      onChange: rateDeliverySchema,
+      onSubmit: rateDeliverySchema.omit({ totalRate: true }),
+      onChange: rateDeliverySchema.omit({ totalRate: true }),
     },
     onSubmit: async ({ value }) => {
-      console.log("Submitting form with values:", value);
-      await createDelivery.mutateAsync(value);
+      const totalRate = calculateTotalRate(value.rate, value.carrierFee);
+
+      await createDelivery.mutateAsync({ ...value, totalRate });
       form.reset();
     },
   });
@@ -67,198 +69,228 @@ export function CreateTripOnFlatRate() {
           <DialogTitle>Create Trip Based on Rate</DialogTitle>
           <DialogDescription>Fill out the form below to create a new trip on flat rate.</DialogDescription>
         </DialogHeader>
-        <FieldSet>
-          <form.Field name='type'>
-            {(field) => <input type='hidden' id={field.name} name={field.name} value={field.state.value} readOnly />}
-          </form.Field>
+        <form onSubmit={handleSubmit} className='space-y-4'>
+          <FieldSet onSubmit={handleSubmit}>
+            <form.Field name='type'>
+              {(field) => <input type='hidden' id={field.name} name={field.name} value={field.state.value} readOnly />}
+            </form.Field>
 
-          <FieldGroup>
-            <form.Field name='vehicleId'>
-              {(field) => {
-                const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-                return (
-                  <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name} required>
-                      Trucks
-                    </FieldLabel>
-                    <TruckSelect
-                      value={field.state.value}
-                      onChange={(value) => field.handleChange(value)}
-                      trucks={trucks?.data || []}
-                      id={field.name}
-                      isInvalid={isInvalid}
-                      placeholder='Select a vehicle'
-                    />
-                    {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                  </Field>
-                );
-              }}
-            </form.Field>
-          </FieldGroup>
+            <FieldGroup>
+              <form.Field name='vehicleId'>
+                {(field) => {
+                  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel htmlFor={field.name} required>
+                        Trucks
+                      </FieldLabel>
+                      <TruckSelect
+                        value={field.state.value}
+                        onChange={(value) => field.handleChange(value)}
+                        trucks={trucks?.data || []}
+                        id={field.name}
+                        isInvalid={isInvalid}
+                        placeholder='Select a vehicle'
+                      />
+                      {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                    </Field>
+                  );
+                }}
+              </form.Field>
+            </FieldGroup>
 
-          <FieldGroup>
-            <form.Field name='driverId'>
-              {(field) => {
-                const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-                return (
-                  <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name} required>
-                      Driver
-                    </FieldLabel>
-                    <DriverSelect
-                      value={field.state.value}
-                      onChange={(value) => field.handleChange(value)}
-                      drivers={drivers?.data || []}
-                      id={field.name}
-                      isInvalid={isInvalid}
-                      placeholder='Select a driver'
-                    />
-                    {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                  </Field>
-                );
-              }}
-            </form.Field>
-          </FieldGroup>
+            <FieldGroup>
+              <form.Field name='driverId'>
+                {(field) => {
+                  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel htmlFor={field.name} required>
+                        Driver
+                      </FieldLabel>
+                      <DriverSelect
+                        value={field.state.value}
+                        onChange={(value) => field.handleChange(value)}
+                        drivers={drivers?.data || []}
+                        id={field.name}
+                        isInvalid={isInvalid}
+                        placeholder='Select a driver'
+                      />
+                      {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                    </Field>
+                  );
+                }}
+              </form.Field>
+            </FieldGroup>
 
-          <FieldGroup>
-            <form.Field name='pickupDate'>
-              {(field) => {
-                const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-                return (
-                  <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name} required>
-                      Date
-                    </FieldLabel>
-                    <Input
-                      type='date'
-                      id={field.name}
-                      name={field.name}
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      aria-invalid={isInvalid}
-                      placeholder='Select date'
-                      autoComplete='off'
-                    />
-                    {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                  </Field>
-                );
-              }}
-            </form.Field>
-          </FieldGroup>
+            <FieldGroup>
+              <form.Field name='pickupDate'>
+                {(field) => {
+                  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel htmlFor={field.name} required>
+                        Date
+                      </FieldLabel>
+                      <Input
+                        type='date'
+                        id={field.name}
+                        name={field.name}
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        aria-invalid={isInvalid}
+                        placeholder='Select date'
+                        autoComplete='off'
+                      />
+                      {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                    </Field>
+                  );
+                }}
+              </form.Field>
+            </FieldGroup>
 
-          <FieldGroup className='flex flex-row gap-4'>
-            <form.Field name='origin'>
-              {(field) => {
-                const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-                return (
-                  <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name} required>
-                      Origin
-                    </FieldLabel>
-                    <Input
-                      id={field.name}
-                      name={field.name}
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      aria-invalid={isInvalid}
-                      placeholder='Enter origin'
-                      autoComplete='off'
-                    />
-                    {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                  </Field>
-                );
-              }}
-            </form.Field>
-            <form.Field name='destination'>
-              {(field) => {
-                const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-                return (
-                  <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name} required>
-                      Destination
-                    </FieldLabel>
-                    <Input
-                      id={field.name}
-                      name={field.name}
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      aria-invalid={isInvalid}
-                      placeholder='Enter destination'
-                      autoComplete='off'
-                    />
-                    {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                  </Field>
-                );
-              }}
-            </form.Field>
-          </FieldGroup>
+            <FieldGroup className='flex flex-row gap-4'>
+              <form.Field name='origin'>
+                {(field) => {
+                  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel htmlFor={field.name} required>
+                        Origin
+                      </FieldLabel>
+                      <Input
+                        id={field.name}
+                        name={field.name}
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        aria-invalid={isInvalid}
+                        placeholder='Enter origin'
+                        autoComplete='off'
+                      />
+                      {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                    </Field>
+                  );
+                }}
+              </form.Field>
+              <form.Field name='destination'>
+                {(field) => {
+                  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel htmlFor={field.name} required>
+                        Destination
+                      </FieldLabel>
+                      <Input
+                        id={field.name}
+                        name={field.name}
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        aria-invalid={isInvalid}
+                        placeholder='Enter destination'
+                        autoComplete='off'
+                      />
+                      {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                    </Field>
+                  );
+                }}
+              </form.Field>
+            </FieldGroup>
 
-          <FieldGroup className='flex flex-row gap-4'>
-            <form.Field name='rate'>
-              {(field) => {
-                const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-                return (
-                  <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name} required>
-                      Rate
-                    </FieldLabel>
-                    <Input
-                      type='number'
-                      id={field.name}
-                      name={field.name}
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(Number(e.target.value))}
-                      step={0.01}
-                      aria-invalid={isInvalid}
-                      placeholder='Enter rate'
-                      autoComplete='off'
-                    />
-                    {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                  </Field>
-                );
-              }}
-            </form.Field>
-            <form.Field name='carrierFee'>
-              {(field) => {
-                const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-                return (
-                  <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name} required>
-                      Carrier Fee
-                    </FieldLabel>
-                    <Input
-                      type='number'
-                      id={field.name}
-                      name={field.name}
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(Number(e.target.value))}
-                      step={0.01}
-                      aria-invalid={isInvalid}
-                      placeholder='Enter carrier fee'
-                      autoComplete='off'
-                    />
-                    {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                  </Field>
-                );
-              }}
-            </form.Field>
-          </FieldGroup>
+            <FieldGroup className='flex flex-row gap-4'>
+              <form.Field name='rate'>
+                {(field) => {
+                  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel htmlFor={field.name} required>
+                        Rate
+                      </FieldLabel>
+                      <Input
+                        type='number'
+                        id={field.name}
+                        name={field.name}
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(Number(e.target.value))}
+                        step={0.01}
+                        aria-invalid={isInvalid}
+                        placeholder='Enter rate'
+                        autoComplete='off'
+                      />
+                      {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                    </Field>
+                  );
+                }}
+              </form.Field>
+              <form.Field name='carrierFee'>
+                {(field) => {
+                  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel htmlFor={field.name} required>
+                        Carrier Fee
+                      </FieldLabel>
+                      <Input
+                        type='number'
+                        id={field.name}
+                        name={field.name}
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(Number(e.target.value))}
+                        step={0.01}
+                        aria-invalid={isInvalid}
+                        placeholder='Enter carrier fee'
+                        autoComplete='off'
+                      />
+                      {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                    </Field>
+                  );
+                }}
+              </form.Field>
+            </FieldGroup>
 
-          {createDelivery.isError && errorDisplay && (
-            <FailedAlert title={errorDisplay.title} description={errorDisplay.message} />
-          )}
-        </FieldSet>
-        <DialogFooter className='gap-2'>
-          <DialogClose asChild>
-            <Button variant='outline'>Cancel</Button>
-          </DialogClose>
-          <Button onClick={handleSubmit}>Add</Button>
-        </DialogFooter>
+            <FieldGroup>
+              <form.Subscribe
+                selector={(state) => ({
+                  rate: state.values.rate,
+                  carrierFee: state.values.carrierFee,
+                })}
+              >
+                {(values) => {
+                  const { rate, carrierFee } = values;
+                  const totalRate = calculateTotalRate(rate, carrierFee);
+                  return (
+                    <Field>
+                      <FieldLabel htmlFor='totalRate'>Total Rate</FieldLabel>
+                      <Input
+                        type='number'
+                        id='totalRate'
+                        name='totalRate'
+                        value={totalRate}
+                        readOnly
+                        tabIndex={-1}
+                        placeholder='Total rate will be calculated automatically'
+                      />
+                    </Field>
+                  );
+                }}
+              </form.Subscribe>
+            </FieldGroup>
+
+            {createDelivery.isError && errorDisplay && (
+              <FailedAlert title={errorDisplay.title} description={errorDisplay.message} />
+            )}
+          </FieldSet>
+          <DialogFooter className='gap-2'>
+            <DialogClose asChild>
+              <Button variant='outline'>Cancel</Button>
+            </DialogClose>
+            <Button type='submit'>Add</Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );
