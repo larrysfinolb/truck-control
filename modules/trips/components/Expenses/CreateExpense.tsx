@@ -70,7 +70,7 @@ export function CreateExpense({ tripId }: CreateExpenseProps) {
                   <FieldLabel htmlFor={field.name} required>
                     Category
                   </FieldLabel>
-                  <Select value={field.state.value} onValueChange={(val) => field.handleChange(val)}>
+                  <Select value={field.state.value} onValueChange={(val) => field.handleChange(val as ExpenseCategory)}>
                     <SelectTrigger id={field.name} aria-invalid={isInvalid}>
                       <SelectValue placeholder='Select a category' />
                     </SelectTrigger>
