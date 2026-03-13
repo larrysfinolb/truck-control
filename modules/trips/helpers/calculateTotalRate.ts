@@ -7,7 +7,7 @@
  */
 export const calculateTotalRate = (rate: number, carrierFee: number): number => {
   const feeAmount = rate * carrierFee;
-  const total = rate + feeAmount;
+  const total = rate - feeAmount;
 
   return Math.round(total * 10000) / 10000;
 };

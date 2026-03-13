@@ -1,7 +1,8 @@
 import z from "zod";
-import { ExpenseCategory } from "../enums/expenseCategory";
+import { ExpenseCategory } from "../../expenses/enums/expenseCategory";
 
 export const createExpenseSchema = z.object({
+  deliveryId: z.uuid(),
   category: z.enum(ExpenseCategory),
   incurredAt: z.string().refine((date) => !isNaN(Date.parse(date))),
   amount: z.number().positive(),

@@ -1,7 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Delivery } from "../../interfaces/deliveryResponse";
 import { DataField } from "./DataField";
-import { DeliveryType } from "../../enums/deliveryType"; // Asegúrate de ajustar esta ruta
 import { formatCurrency, formatPercent } from "@/modules/shared/utils/formatters";
 
 interface TripPaymentInformationProps {
@@ -34,33 +33,16 @@ export function TripPaymentInformation({ trip, className }: TripPaymentInformati
 
       <div className='p-6'>
         <dl className='flex flex-col'>
-          {trip.type === DeliveryType.FIXED_RATE && (
-            <>
-              <DataField className={receiptRowClass} label='Rate' value={formatCurrency(trip.rate)} />
-              <DataField className={receiptRowClass} label='Carrier Fee' value={formatPercent(trip.carrierFee)} />
-            </>
-          )}
+          <DataField className={receiptRowClass} label='Rate' value={formatCurrency(trip.rate)} />
+          <DataField className={receiptRowClass} label='Carrier Fee' value={formatPercent(trip.carrierFee)} />
 
-          {trip.type === DeliveryType.MILEAGE_BASED && (
-            <>
-              <DataField className={receiptRowClass} label='Miles' value={trip.miles} fallback='' />
-              <DataField className={receiptRowClass} label='Rate Per Mile' value={formatCurrency(trip.ratePerMile)} />
-              <DataField className={receiptRowClass} label='Deadhead Miles' value={trip.deadheadMiles} fallback='' />
-              <DataField
-                className={receiptRowClass}
-                label='Rate Per DH Mile'
-                value={formatCurrency(trip.ratePerDeadheadMile)}
-              />
-
-              <div className='mt-2 pt-4 border-t-2 border-border/80'>
-                <DataField
-                  label='Total Payment'
-                  value={formatCurrency(trip.totalPayment)}
-                  className='flex-row justify-between items-center space-y-0  [&>dd]:font-bold'
-                />
-              </div>
-            </>
-          )}
+          <div className='mt-2 pt-4 border-t-2 border-border/80'>
+            <DataField
+              label='Total Rate'
+              value={formatCurrency(trip.totalRate)}
+              className='flex-row justify-between items-center space-y-0  [&>dd]:font-bold'
+            />
+          </div>
         </dl>
       </div>
     </section>

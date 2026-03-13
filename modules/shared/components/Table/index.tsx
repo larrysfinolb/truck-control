@@ -1,7 +1,15 @@
 "use client";
 
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/modules/shared/components/UI/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/modules/shared/components/UI/table";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -14,6 +22,10 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
+
+  const hasFooter = table
+    .getFooterGroups()
+    .some((group) => group.headers.some((header) => header.column.columnDef.footer));
 
   return (
     <div className='overflow-hidden rounded-md border'>
@@ -48,6 +60,20 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
             </TableRow>
           )}
         </TableBody>
+
+        {hasFooter && (
+          <TableFooter>
+            {table.getFooterGroups().map((footerGroup) => (
+              <TableRow key={footerGroup.id}>
+                {footerGroup.headers.map((header) => (
+                  <TableCell key={header.id}>
+                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.footer, header.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableFooter>
+        )}
       </Table>
     </div>
   );

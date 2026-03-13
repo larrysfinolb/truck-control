@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { expensesApi } from "../api/expenses";
 import { ExpensesListParams } from "../interfaces/expenseParams";
 import { CreateExpenseSchemaType, ExpenseIdSchemaType, UpdateExpenseSchemaType } from "../schemas/expense";
+import { QUERY_KEYS } from "../consts/query-keys";
 
 const KEYS = {
   expenses: "expenses",
@@ -28,8 +29,8 @@ export const useCreateExpense = () => {
 
   return useMutation({
     mutationFn: (data: CreateExpenseSchemaType) => expensesApi.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [KEYS.expenses] });
+    onSuccess: ({ data }) => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.TRIPS, data.deliveryId] });
     },
     onError: (error) => {
       console.error("Create expense failed:", error);

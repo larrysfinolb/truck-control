@@ -4,12 +4,11 @@ import { CreateDeliverySchemaType, UpdateDeliverySchemaType } from "../schemas/d
 import { DeliveriesListParams } from "../interfaces/deliveryParams";
 import { GetAllResponse } from "@/modules/shared/interfaces/apiResponse";
 import { Delivery } from "../interfaces/deliveryResponse";
-
-const KEY = "deliveries";
+import { QUERY_KEYS } from "../consts/query-keys";
 
 export const useDeliveries = <T = Delivery>(params: DeliveriesListParams) => {
   return useQuery({
-    queryKey: [KEY, params],
+    queryKey: [QUERY_KEYS.TRIPS, params],
     queryFn: async () => {
       const response = await deliveriesApi.getAll(params);
       return response as GetAllResponse<T>;
@@ -19,7 +18,7 @@ export const useDeliveries = <T = Delivery>(params: DeliveriesListParams) => {
 
 export const useDelivery = (id: string) => {
   return useQuery({
-    queryKey: [KEY, id],
+    queryKey: [QUERY_KEYS.TRIPS, id],
     queryFn: () => deliveriesApi.getOne(id),
     enabled: !!id,
   });
@@ -31,7 +30,7 @@ export const useCreateDelivery = () => {
   return useMutation({
     mutationFn: (data: CreateDeliverySchemaType) => deliveriesApi.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [KEY] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.TRIPS] });
     },
     onError: (error) => {
       console.error("Create delivery failed:", error);
@@ -45,7 +44,7 @@ export const useUpdateDelivery = () => {
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateDeliverySchemaType }) => deliveriesApi.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [KEY] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.TRIPS] });
     },
     onError: (error) => {
       console.error("Update delivery failed:", error);
@@ -59,7 +58,7 @@ export const useDeleteDelivery = () => {
   return useMutation({
     mutationFn: (id: string) => deliveriesApi.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [KEY] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.TRIPS] });
     },
     onError: (error) => {
       console.error("Delete delivery failed:", error);

@@ -16,10 +16,14 @@ import {
 import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from "@/modules/shared/components/UI/field";
 import { Input } from "@/modules/shared/components/UI/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/modules/shared/components/UI/select";
-import { ExpenseCategory } from "../../enums/expenseCategory";
+import { ExpenseCategory } from "../../../expenses/enums/expenseCategory";
 import { AppAlert } from "@/modules/shared/components/Alert";
 
-export function CreateExpense() {
+interface CreateExpenseProps {
+  tripId: string;
+}
+
+export function CreateExpense({ tripId }: CreateExpenseProps) {
   const createExpense = useCreateExpense();
   const errorDisplay = useApiError(createExpense.error);
 
@@ -27,17 +31,17 @@ export function CreateExpense() {
 
   const form = useForm({
     defaultValues: {
-      category: "",
+      category: ExpenseCategory.FUEL,
       incurredAt: new Date().toISOString().split("T")[0],
       amount: 0,
       note: "",
     },
     validators: {
-      onSubmit: createExpenseSchema,
-      onChange: createExpenseSchema,
+      onSubmit: createExpenseSchema.omit({ deliveryId: true }),
+      onChange: createExpenseSchema.omit({ deliveryId: true }),
     },
     onSubmit: async ({ value }) => {
-      await createExpense.mutateAsync({ ...value, category: value.category as ExpenseCategory });
+      await createExpense.mutateAsync({ ...value, deliveryId: tripId });
       form.reset();
     },
   });

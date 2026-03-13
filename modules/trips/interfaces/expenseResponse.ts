@@ -1,9 +1,15 @@
-import { ApiResponse, DeleteResponse, GetAllResponse, SingleEntityResponse } from "@/modules/shared/interfaces/apiResponse";
-import { ExpenseCategory } from "../enums/expenseCategory";
+import {
+  ApiResponse,
+  DeleteResponse,
+  GetAllResponse,
+  SingleEntityResponse,
+} from "@/modules/shared/interfaces/apiResponse";
+import { ExpenseCategory } from "../../expenses/enums/expenseCategory";
 
 export interface Expense {
   id: string;
   userId: string;
+  deliveryId: string;
   category: ExpenseCategory;
   incurredAt: Date;
   amount: number;

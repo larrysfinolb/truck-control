@@ -2,6 +2,7 @@ import { DeleteResponse, GetAllResponse, SingleEntityResponse } from "@/modules/
 import { DeliveryType } from "../enums/deliveryType";
 import { Truck } from "@/modules/trucks/interfaces/truckResponse";
 import { Driver } from "@/modules/drivers/interfaces/driverResponse";
+import { Expense } from "./expenseResponse";
 
 export interface Delivery {
   id: string;
@@ -17,6 +18,7 @@ export interface Delivery {
   rate?: number;
   carrierFee?: number;
   totalRate?: number;
+  expenses: Expense[];
   miles?: number;
   ratePerMile?: number;
   deadheadMiles?: number;
