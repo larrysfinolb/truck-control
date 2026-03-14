@@ -43,13 +43,11 @@ export function CreateTripOnFlatRate() {
       carrierFee: 0,
     },
     validators: {
-      onSubmit: rateDeliverySchema.omit({ totalRate: true }),
-      onChange: rateDeliverySchema.omit({ totalRate: true }),
+      onSubmit: rateDeliverySchema,
+      onChange: rateDeliverySchema,
     },
     onSubmit: async ({ value }) => {
-      const totalRate = calculateTotalRate(value.rate, value.carrierFee);
-
-      await createDelivery.mutateAsync({ ...value, totalRate });
+      await createDelivery.mutateAsync({ ...value });
       form.reset();
     },
   });

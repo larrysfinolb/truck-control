@@ -13,7 +13,6 @@ const baseDeliverySchema = z.object({
 export const rateDeliverySchema = baseDeliverySchema.extend({
   rate: z.number().positive(),
   carrierFee: z.number().min(0).max(1),
-  totalRate: z.number().positive(),
 });
 
 export const mileageDeliverySchema = baseDeliverySchema.extend({
