@@ -3,4 +3,5 @@ import { DeliveryType } from "../enums/deliveryType";
 
 export interface DeliveriesListParams extends PaginationParams {
   type?: DeliveryType;
+  search?: string;
 }
