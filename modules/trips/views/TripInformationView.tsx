@@ -3,7 +3,7 @@
 import { usePageTitle } from "@/modules/shared/hooks/usePageTitle";
 import { DeliveriesLayout } from "../layouts/DeliveriesLayout";
 import { useParams } from "next/navigation";
-import { useDelivery } from "../hooks/useDeliveries";
+import { useDelivery } from "../hooks/useTrips";
 import { TripGeneralInformation, TripPaymentInformation } from "../components/TripInformation/";
 import { Expenses } from "../components/Expenses";
 

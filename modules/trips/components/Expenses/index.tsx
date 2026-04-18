@@ -1,4 +1,4 @@
-import { Delivery } from "../../interfaces/deliveryResponse";
+import { Delivery } from "../../interfaces/trip";
 import { CreateExpense } from "./CreateExpense";
 import { ExpensesListTable } from "./ExpensesList";
 

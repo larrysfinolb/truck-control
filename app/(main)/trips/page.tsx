@@ -1,5 +1,5 @@
-import TripsOnFlatRate from "@/modules/trips/views/TripsOnFlatRate";
+import TripsView from "@/modules/trips/views/TripsView";
 
 export default function Page() {
-  return <TripsOnFlatRate />;
+  return <TripsView />;
 }

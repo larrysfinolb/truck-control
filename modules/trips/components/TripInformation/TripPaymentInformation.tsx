@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Delivery } from "../../interfaces/deliveryResponse";
+import { Delivery } from "../../interfaces/trip";
 import { DataField } from "./DataField";
 import { formatCurrency, formatPercent } from "@/modules/shared/utils/formatters";
 
@@ -38,8 +38,8 @@ export function TripPaymentInformation({ trip, className }: TripPaymentInformati
 
           <div className='mt-2 pt-4 border-t-2 border-border/80'>
             <DataField
-              label='Total Rate'
-              value={formatCurrency(trip.totalRate)}
+              label='Total Payment'
+              value={formatCurrency(trip.totalPayment)}
               className='flex-row justify-between items-center space-y-0  [&>dd]:font-bold'
             />
           </div>

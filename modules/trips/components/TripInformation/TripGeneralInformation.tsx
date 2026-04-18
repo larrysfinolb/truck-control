@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Delivery } from "../../interfaces/deliveryResponse";
+import { Delivery } from "../../interfaces/trip";
 import { DataField } from "./DataField";
 
 interface TripGeneralInformationProps {

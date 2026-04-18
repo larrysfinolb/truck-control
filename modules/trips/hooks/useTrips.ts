@@ -1,16 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { deliveriesApi } from "../api/deliveries";
-import { CreateDeliverySchemaType, UpdateDeliverySchemaType } from "../schemas/delivery";
-import { DeliveriesListParams } from "../interfaces/deliveryParams";
+import { CreateTripSchemaType, UpdateTripSchemaType } from "../schemas/trip";
 import { GetAllResponse } from "@/modules/shared/interfaces/apiResponse";
-import { Delivery } from "../interfaces/deliveryResponse";
 import { QUERY_KEYS } from "../consts/query-keys";
+import { Trip, TripsListParams } from "../interfaces/trip";
+import { tripsApi } from "../api/trips";
 
-export const useDeliveries = <T = Delivery>(params: DeliveriesListParams) => {
+export const useDeliveries = <T = Trip>(params: TripsListParams) => {
   return useQuery({
     queryKey: [QUERY_KEYS.TRIPS, params],
     queryFn: async () => {
-      const response = await deliveriesApi.getAll(params);
+      const response = await tripsApi.getAll(params);
       return response as GetAllResponse<T>;
     },
   });
@@ -19,7 +18,7 @@ export const useDeliveries = <T = Delivery>(params: DeliveriesListParams) => {
 export const useDelivery = (id: string) => {
   return useQuery({
     queryKey: [QUERY_KEYS.TRIPS, id],
-    queryFn: () => deliveriesApi.getOne(id),
+    queryFn: () => tripsApi.getOne(id),
     enabled: !!id,
   });
 };
@@ -28,7 +27,7 @@ export const useCreateDelivery = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: CreateDeliverySchemaType) => deliveriesApi.create(data),
+    mutationFn: (data: CreateTripSchemaType) => tripsApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.TRIPS] });
     },
@@ -42,7 +41,7 @@ export const useUpdateDelivery = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateDeliverySchemaType }) => deliveriesApi.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: UpdateTripSchemaType }) => tripsApi.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.TRIPS] });
     },
@@ -56,7 +55,7 @@ export const useDeleteDelivery = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) => deliveriesApi.delete(id),
+    mutationFn: (id: string) => tripsApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.TRIPS] });
     },
